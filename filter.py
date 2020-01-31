@@ -6,7 +6,12 @@ import math
 file = open("textMsgs.data.txt", "r")
 
 contents = file.read()
-filtered_words = ["the", "an", "a"]
+filtered_words = ["the", "be", "to", "of", "and", "a", "in", "that", "have", "I", "it", "for",
+"not", "on", "with", "he", "as", "you", "do", "at", "this", "but", "his", "by", "from", "they",
+"we", "say", "her", "she", "or", "will", "an", "my", "one", "all", "would", "there", "their", "what",
+"me", "make", "can", "like", "time", "no", "just", "him", "know", "take", "than", "then", "now",
+"look", "only", "come", "its", "over", "think", "also", "even", "new", "want", "because", "any",
+"these", "give", "day", "most", "us"]
 
 #NEED TO CREATE A TRAINING(What it learns from) AND TEST(What it checks against) SAMPLE FROM THESE
 breakup_of_messages = re.split(r"\n", contents)
@@ -25,7 +30,7 @@ testing = []
 #Pull together a dictionary of vocab words
 #Split into a training and test set by 2:1 ratio.
 for i in range(0, len(breakup_of_messages)):
-	if i%4 == 3:
+	if i%4 == 2:
 		testing.append(breakup_of_messages[i])
 	else:
 		training.append(breakup_of_messages[i])
@@ -33,6 +38,7 @@ for i in range(0, len(breakup_of_messages)):
 class_total_word_counts = {"ham": 0, "spam": 0 }
 print("------")
 for message in training:
+	message = message.lower()
 	message = message.split()
 	classification = message.pop(0)
 	#print(classification)
@@ -61,8 +67,8 @@ for message in testing:
 	message = message.split()
 	classification = message.pop(0)
 
-	ham_prob = class_counts["ham"]/(class_counts["ham"]+class_counts["spam"])
-	spam_prob = class_counts["spam"]/(class_counts["ham"]+class_counts["spam"])
+	ham_prob = math.log(class_counts["ham"]/(class_counts["ham"]+class_counts["spam"]))
+	spam_prob = math.log(class_counts["spam"]/(class_counts["ham"]+class_counts["spam"]))
 
 	for word in message:
 		total_count = class_total_word_counts["ham"]+len(vocab)
@@ -93,5 +99,3 @@ print(TP)
 print(FP)
 print(FN)
 print(TN)
-
-
