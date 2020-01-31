@@ -13,6 +13,7 @@ filtered_words = ["the", "be", "to", "of", "and", "a", "in", "that", "have", "I"
 "me", "make", "can", "like", "time", "no", "just", "him", "know", "take", "than", "then", "now",
 "look", "only", "come", "its", "over", "think", "also", "even", "new", "want", "because", "any",
 "these", "give", "day", "most", "us"]
+spamWeights = ["STOP", "www", "prize", "call", "FREE", "Call", "txt", "Txt", "reply", "free", "mobile", "claim"]
 
 breakup_of_messages = re.split(r"\n", contents)
 breakup_of_messages.pop() #Removed empty split at end
@@ -30,7 +31,7 @@ testing = []
 #Pull together a dictionary of vocab words
 #Split into a training and test set by 2:1 ratio.
 for i in range(0, len(breakup_of_messages)):
-	if i%4 == 1:
+	if i%4 == 3:
 		testing.append(breakup_of_messages[i])
 	else:
 		training.append(breakup_of_messages[i])
@@ -76,7 +77,10 @@ for message in testing:
 		if word not in class_word_counts["spam"]:
 			spam_prob += math.log(1/total_count)
 		else:
-			spam_prob += math.log((class_word_counts["spam"][word] + 1)/total_count)
+			if word in spamWeights:
+				spam_prob += math.log((class_word_counts["spam"][word]*5 + 1)/total_count)
+			else:
+				spam_prob += math.log((class_word_counts["spam"][word] + 1)/total_count)
 
 	if (spam_prob > ham_prob):
 		if classification == "spam":
