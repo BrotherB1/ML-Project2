@@ -1,4 +1,5 @@
 import re
+import string
 import matplotlib.pyplot as plt
 import numpy as np
 import math
@@ -38,7 +39,9 @@ for i in range(0, len(breakup_of_messages)):
 class_total_word_counts = {"ham": 0, "spam": 0 }
 print("------")
 for message in training:
-	message = message.lower()
+	message = re.sub(r'[.|?|!|,|\'|:|&|;|-]',' ',message)
+	print(message)
+	# message = message.translate(str.maketrans("","", string.punctuation))
 	message = message.split()
 	classification = message.pop(0)
 	#print(classification)
@@ -52,8 +55,8 @@ for message in training:
 				class_word_counts[classification][word] = 1
 			else:
 				class_word_counts[classification][word] += 1
-print(class_total_word_counts["ham"])
-print(class_total_word_counts["spam"])
+# print(class_total_word_counts["ham"])
+# print(class_total_word_counts["spam"])
 
 train_size = len(training)
 class_probability = {"ham": class_counts["ham"]/train_size, "spam": class_counts["spam"]/train_size}
@@ -90,9 +93,9 @@ for message in testing:
 		if classification == "ham":
 			TP += 1
 		else:
-			print(ham_prob)
-			print(spam_prob)
-			print("______")
+			# print(ham_prob)
+			# print(spam_prob)
+			# print("______")
 			FP += 1
 
 print(TP)
