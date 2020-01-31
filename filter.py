@@ -1,10 +1,12 @@
 import re
 import matplotlib.pyplot as plt
 import numpy as np
+import math
 
 file = open("textMsgs.data.txt", "r")
 
 contents = file.read()
+filtered_words = ["the", "an", "a"]
 
 #NEED TO CREATE A TRAINING(What it learns from) AND TEST(What it checks against) SAMPLE FROM THESE
 breakup_of_messages = re.split(r"\n", contents)
@@ -36,18 +38,20 @@ for message in training:
 	#print(classification)
 	class_counts[classification] += 1
 	for word in message:
-		class_total_word_counts[classification] += 1
-		if word not in vocab:
-			vocab.append(word)
-		if word not in class_word_counts[classification]:
-			class_word_counts[classification][word] = 1
-		else:
-			class_word_counts[classification][word] += 1
+        if word not in filtered_words:
+            class_total_word_counts[classification] += 1
+            if word not in vocab:
+                vocab.append(word)
+            if word not in class_word_counts[classification]:
+                class_word_counts[classification][word] = 1
+            else:
+                class_word_counts[classification][word] += 1
 print(class_total_word_counts["ham"])
 print(class_total_word_counts["spam"])
 
 train_size = len(training)
 class_probability = {"ham": class_counts["ham"]/train_size, "spam": class_counts["spam"]/train_size}
+
 
 TP = 0
 FP = 0
@@ -63,13 +67,13 @@ for message in testing:
 	for word in message:
 		total_count = class_total_word_counts["ham"]+len(vocab)
 		if word not in class_word_counts["ham"]:
-			ham_prob *= 1/total_count
+			ham_prob += math.log(1/total_count)
 		else:
-			ham_prob *= (class_word_counts["ham"][word] + 1)/total_count
+			ham_prob += math.log((class_word_counts["ham"][word] + 1)/total_count)
 		if word not in class_word_counts["spam"]:
-			spam_prob *= 1/total_count
+			spam_prob += math.log(1/total_count)
 		else:
-			spam_prob *= (class_word_counts["spam"][word] + 1)/total_count
+			spam_prob += math.log((class_word_counts["spam"][word] + 1)/total_count)
 
 	if (spam_prob > ham_prob):
 		if classification == "spam":
@@ -89,4 +93,5 @@ print(TP)
 print(FP)
 print(FN)
 print(TN)
+
 
