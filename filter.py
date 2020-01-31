@@ -38,14 +38,14 @@ for message in training:
 	#print(classification)
 	class_counts[classification] += 1
 	for word in message:
-        if word not in filtered_words:
-            class_total_word_counts[classification] += 1
-            if word not in vocab:
-                vocab.append(word)
-            if word not in class_word_counts[classification]:
-                class_word_counts[classification][word] = 1
-            else:
-                class_word_counts[classification][word] += 1
+		if word not in filtered_words:
+			class_total_word_counts[classification] += 1
+			if word not in vocab:
+				vocab.append(word)
+			if word not in class_word_counts[classification]:
+				class_word_counts[classification][word] = 1
+			else:
+				class_word_counts[classification][word] += 1
 print(class_total_word_counts["ham"])
 print(class_total_word_counts["spam"])
 
