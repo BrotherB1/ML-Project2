@@ -14,7 +14,6 @@ filtered_words = ["the", "be", "to", "of", "and", "a", "in", "that", "have", "I"
 "look", "only", "come", "its", "over", "think", "also", "even", "new", "want", "because", "any",
 "these", "give", "day", "most", "us"]
 
-#NEED TO CREATE A TRAINING(What it learns from) AND TEST(What it checks against) SAMPLE FROM THESE
 breakup_of_messages = re.split(r"\n", contents)
 breakup_of_messages.pop() #Removed empty split at end
 print(len(breakup_of_messages))
@@ -31,23 +30,19 @@ testing = []
 #Pull together a dictionary of vocab words
 #Split into a training and test set by 2:1 ratio.
 for i in range(0, len(breakup_of_messages)):
-	if i%4 == 2:
+	if i%4 == 1:
 		testing.append(breakup_of_messages[i])
 	else:
 		training.append(breakup_of_messages[i])
 
 class_total_word_counts = {"ham": 0, "spam": 0 }
-print("------")
 for message in training:
-	message = re.sub(r'[.|?|!|,|\'|:|&|;|-]',' ',message)
-	print(message)
-	# message = message.translate(str.maketrans("","", string.punctuation))
+	message = re.sub(r'[.?!,\':;\-\(\)]',' ',message)
 	message = message.split()
 	classification = message.pop(0)
-	#print(classification)
 	class_counts[classification] += 1
 	for word in message:
-		if word not in filtered_words:
+		if word not in filtered_words and len(word) > 1:
 			class_total_word_counts[classification] += 1
 			if word not in vocab:
 				vocab.append(word)
@@ -55,8 +50,6 @@ for message in training:
 				class_word_counts[classification][word] = 1
 			else:
 				class_word_counts[classification][word] += 1
-# print(class_total_word_counts["ham"])
-# print(class_total_word_counts["spam"])
 
 train_size = len(training)
 class_probability = {"ham": class_counts["ham"]/train_size, "spam": class_counts["spam"]/train_size}
@@ -67,6 +60,7 @@ FP = 0
 FN = 0
 TN = 0
 for message in testing:
+	message = re.sub(r'[.?!,\':;\-\(\)]',' ',message)
 	message = message.split()
 	classification = message.pop(0)
 
@@ -93,12 +87,9 @@ for message in testing:
 		if classification == "ham":
 			TP += 1
 		else:
-			# print(ham_prob)
-			# print(spam_prob)
-			# print("______")
 			FP += 1
 
-print(TP)
-print(FP)
-print(FN)
-print(TN)
+print("True Positive count: " + str(TP))
+print("False Positive count: " + str(FP))
+print("False Negative count: " + str(FN))
+print("True Negative count: " + str(TN))
